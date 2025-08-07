@@ -1,4 +1,4 @@
-# Use an official OpenJDK 17 runtime as a base image
+# Use an official OpenJDK 21 runtime to match the project
 FROM openjdk:21-jdk-slim
 
 # Set the working directory inside the container
@@ -8,7 +8,7 @@ WORKDIR /app
 COPY .mvn/ .mvn
 COPY mvnw pom.xml ./
 
-# Add this line to make the mvnw script executable
+# Make the mvnw script executable
 RUN chmod +x ./mvnw
 
 # Download project dependencies
@@ -17,11 +17,9 @@ RUN ./mvnw dependency:go-offline
 # Copy the rest of the application source code
 COPY src ./src
 
-# Build the application into a JAR file
-RUN ./mvnw package -DskipTests
-
-# Copy the built JAR file to a standard name
-COPY target/*.jar app.jar
+# This is the updated, more robust command
+# It builds the app AND copies the JAR in a single step
+RUN ./mvnw package -DskipTests && cp target/*.jar app.jar
 
 # This is the command that will run when the container starts
 ENTRYPOINT ["java","-Dserver.port=${PORT}","-jar","app.jar"]
