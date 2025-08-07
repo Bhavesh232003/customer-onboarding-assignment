@@ -2,224 +2,121 @@
 
 A Spring Boot REST API for managing customer onboarding with role-based access control and appointment scheduling functionality.
 
-##  Features
+## Overview
 
-- **Customer Management**: Create and view customer information
-- **Role-Based Access Control**: Admin and User roles with different permissions
-- **Token-Based Authentication**: Simple Bearer token authentication
-- **Appointment Scheduling**: Basic appointment booking functionality
-- **Input Validation**: Comprehensive validation with error handling
-- **In-Memory Storage**: Thread-safe data persistence using ConcurrentHashMap
+This project provides a backend service for managing customer onboarding processes. It includes secure APIs for creating and viewing customer information with role-based access control to ensure only authorized users can perform specific actions. The application also features a bonus appointment scheduling endpoint for enhanced functionality.
 
-## 🛠 Tech Stack
+## Features
 
-- **Java 17+(java 21 used)**
-- **Spring Boot 3.x**
-- **Spring Security**
-- **Maven**
-- **Jakarta Validation**
+- **Add new customers** - Create customer records with business information and document metadata
+- **View customer details** - Retrieve customer information by ID
+- **Role-Based Access Control (RBAC)** - Admin and User roles with different permission levels
+- **Appointment scheduling stub** - Basic appointment booking functionality
+- **Input validation** - Comprehensive request validation with detailed error messages
+- **Thread-safe storage** - Concurrent data handling using in-memory storage
+- **Token-based authentication** - Simple Bearer token security implementation
 
-## 📋 Prerequisites
+## Tech Stack
 
-- Java 17 or higher
-- Maven 3.6+
+- **Java 17+** - Latest LTS version with modern language features
+- **Spring Boot 3.x** - Latest Spring Boot framework
+- **Maven** - Dependency management and build tool
+- **Spring Security** - Authentication and authorization framework
+- **Jakarta Validation** - Bean validation for request data
+- **Spring Web** - RESTful web services framework
 
-##  Quick Start
+## Prerequisites
 
-### 1. Clone the Repository
-```bash
-git clone <repository-url>
-cd customer-onboarding
-```
+Before running this application, ensure you have:
 
-### 2. Build the Project
-```bash
-mvn clean compile
-```
+- **JDK 17 or higher** installed
+- **Maven 3.6+** installed
+- **Internet connection** for downloading dependencies
 
-### 3. Run the Application
-```bash
-mvn spring-boot:run
-```
+## Setup and Installation
+
+### Method 1: Using Spring Initializer (Recommended)
+
+1. **Generate Project Structure**:
+   - Visit [Spring Initializer](https://start.spring.io/)
+   - Configure:
+     - Project: Maven
+     - Language: Java
+     - Spring Boot: 3.x.x
+     - Java: 17
+   - Add Dependencies:
+     - Spring Web
+     - Spring Security
+     - Validation
+   - Generate and download the project
+
+2. **Clone the Repository**:
+   ```bash
+   git clone <your-repository-url>
+   cd customer-onboarding
+   ```
+
+3. **Build the Project**:
+   ```bash
+   mvn clean compile
+   ```
+
+4. **Run the Application**:
+   ```bash
+   mvn spring-boot:run
+   ```
 
 The application will start on `http://localhost:8080`
 
-##  Authentication
+## API Endpoints and Usage
 
-The API uses Bearer token authentication with two predefined roles:
+### Base URLs
+- **Local Development**: `http://localhost:8080`
+- **Production (Deployed)**: `https://your-service-name.onrender.com`
 
-| Token | Role | Permissions |
-|-------|------|------------|
-| `ADMIN123` | Admin | Full access to all endpoints |
-| `USER123` | User | Read-only access to customer details and appointment creation |
+*Replace `your-service-name` with your actual Render service name in this case `customer-onboarding-api` *
 
-### Usage
-Include the token in the Authorization header:
-```
-Authorization: Bearer ADMIN123
-```
-
-## API Endpoints
+---
 
 ### 1. Create Customer
+
 **POST** `/customers`
 
-Creates a new customer record.
+Creates a new customer record with business information and document metadata.
 
-**Access:** Admin only
+**Access:** Admin role only (`ADMIN123` token)
 
-**Request Body:**
+**Postman Configuration:**
+- **Method**: POST
+- **URL**: `https://customer-onboarding-api.onrender.com/customers`
+- **Headers**:
+  - `Content-Type: application/json`
+  - `Authorization: Bearer ADMIN123`
+- **Body** (raw JSON):
 ```json
 {
   "businessName": "Tech Solutions Inc",
   "phoneNumber": "+1-555-0123",
   "website": "https://techsolutions.com",
-  "documents": ["business_license.pdf", "tax_certificate.pdf"]
+  "documents": ["business_license.pdf", "tax_certificate.pdf", "insurance_policy.pdf"]
 }
 ```
 
-**Response:**
+**Successful Response (201 Created):**
 ```json
 {
   "id": 1,
   "businessName": "Tech Solutions Inc",
   "phoneNumber": "+1-555-0123",
   "website": "https://techsolutions.com",
-  "documents": ["business_license.pdf", "tax_certificate.pdf"]
+  "documents": ["business_license.pdf", "tax_certificate.pdf", "insurance_policy.pdf"]
 }
 ```
 
-**Status Codes:**
-- `201 Created` - Customer successfully created
-- `400 Bad Request` - Validation errors
-- `403 Forbidden` - Insufficient permissions
+**Error Response - Insufficient Permissions (403 Forbidden):**
+When using USER123 token or invalid token.
 
-### 2. Get Customer Details
-**GET** `/customers/{id}`
-
-Retrieves customer information by ID.
-
-**Access:** Admin and User roles
-
-**Response:**
-```json
-{
-  "id": 1,
-  "businessName": "Tech Solutions Inc",
-  "phoneNumber": "+1-555-0123",
-  "website": "https://techsolutions.com",
-  "documents": ["business_license.pdf", "tax_certificate.pdf"]
-}
-```
-
-**Status Codes:**
-- `200 OK` - Customer found
-- `404 Not Found` - Customer not found
-- `403 Forbidden` - Insufficient permissions
-
-### 3. Schedule Appointment (Bonus)
-**POST** `/appointments`
-
-Creates an appointment booking.
-
-**Access:** Admin and User roles
-
-**Request Body:**
-```json
-{
-  "customerId": 1,
-  "datetime": "2024-12-15T10:30:00"
-}
-```
-
-**Response:**
-```json
-{
-  "customerId": 1,
-  "datetime": "2024-12-15T10:30:00"
-}
-```
-
-**Status Codes:**
-- `200 OK` - Appointment scheduled
-- `400 Bad Request` - Validation errors
-- `403 Forbidden` - Insufficient permissions
-
-##  Testing with cURL
-
-### Create a Customer (Admin)
-```bash
-curl -X POST http://localhost:8080/customers \
-  -H "Content-Type: application/json" \
-  -H "Authorization: Bearer ADMIN123" \
-  -d '{
-    "businessName": "Tech Solutions Inc",
-    "phoneNumber": "+1-555-0123",
-    "website": "https://techsolutions.com",
-    "documents": ["business_license.pdf", "tax_certificate.pdf"]
-  }'
-```
-
-### Get Customer Details (User)
-```bash
-curl -X GET http://localhost:8080/customers/1 \
-  -H "Authorization: Bearer USER123"
-```
-
-### Schedule Appointment (User)
-```bash
-curl -X POST http://localhost:8080/appointments \
-  -H "Content-Type: application/json" \
-  -H "Authorization: Bearer USER123" \
-  -d '{
-    "customerId": 1,
-    "datetime": "2024-12-15T10:30:00"
-  }'
-```
-
-### Test Access Control (Should fail)
-```bash
-# User trying to create customer (should return 403)
-curl -X POST http://localhost:8080/customers \
-  -H "Content-Type: application/json" \
-  -H "Authorization: Bearer USER123" \
-  -d '{
-    "businessName": "Test Company",
-    "phoneNumber": "+1-555-9999"
-  }'
-```
-
-## Testing with Postman
-
-### Import Collection
-Create a new Postman collection with the following requests:
-
-1. **Create Customer**
-   - Method: POST
-   - URL: `http://localhost:8080/customers`
-   - Headers: 
-     - `Content-Type: application/json`
-     - `Authorization: Bearer ADMIN123`
-   - Body: Raw JSON (see example above)
-
-2. **Get Customer**
-   - Method: GET
-   - URL: `http://localhost:8080/customers/1`
-   - Headers: `Authorization: Bearer USER123`
-
-3. **Schedule Appointment**
-   - Method: POST
-   - URL: `http://localhost:8080/appointments`
-   - Headers: 
-     - `Content-Type: application/json`
-     - `Authorization: Bearer USER123`
-   - Body: Raw JSON (see example above)
-
-## Error Handling
-
-The API provides comprehensive error responses:
-
-### Validation Errors (400 Bad Request)
+**Error Response - Validation Errors (400 Bad Request):**
 ```json
 {
   "businessName": "BusinessName is Required Field",
@@ -227,62 +124,226 @@ The API provides comprehensive error responses:
 }
 ```
 
-### Authorization Errors (403 Forbidden)
+---
+
+### 2. Get Customer Details
+
+**GET** `/customers/{id}`
+
+Retrieves detailed information about a specific customer by their ID.
+
+**Access:** Both Admin and User roles (`ADMIN123` or `USER123` tokens)
+
+**Postman Configuration:**
+- **Method**: GET
+- **URL**: `https://customer-onboarding-api.onrender.com/customers/1`
+- **Headers**:
+  - `Authorization: Bearer USER123` (or `ADMIN123`)
+
+**Successful Response (200 OK):**
 ```json
 {
-  "timestamp": "2024-08-07T10:30:00.000+00:00",
-  "status": 403,
-  "error": "Forbidden",
-  "path": "/customers"
+  "id": 1,
+  "businessName": "Tech Solutions Inc",
+  "phoneNumber": "+1-555-0123",
+  "website": "https://techsolutions.com",
+  "documents": ["business_license.pdf", "tax_certificate.pdf", "insurance_policy.pdf"]
 }
 ```
 
-### Not Found Errors (404 Not Found)
-Empty response body with 404 status code.
+**Error Response - Customer Not Found (404 Not Found):**
+Empty response body with 404 status code when customer ID doesn't exist.
 
-##  Data Storage
+---
 
-The application uses in-memory storage with the following characteristics:
+### 3. Schedule Appointment (Bonus Feature)
 
-- **Thread-Safe**: Uses `ConcurrentHashMap` and `AtomicLong`
-- **Auto-Incrementing IDs**: Automatically assigns unique IDs to customers
-- **Temporary**: Data is lost when the application restarts
+**POST** `/appointments`
+
+Creates an appointment booking for a customer. This is a stub implementation that echoes back the input data.
+
+**Access:** Both Admin and User roles (`ADMIN123` or `USER123` tokens)
+
+**Postman Configuration:**
+- **Method**: POST
+- **URL**: `https://customer-onboarding-api.onrender.com/appointments`
+- **Headers**:
+  - `Content-Type: application/json`
+  - `Authorization: Bearer USER123` (or `ADMIN123`)
+- **Body** (raw JSON):
+```json
+{
+  "customerId": 1,
+  "datetime": "2024-12-15T10:30:00"
+}
+```
+
+**Successful Response (200 OK):**
+```json
+{
+  "customerId": 1,
+  "datetime": "2024-12-15T10:30:00"
+}
+```
+
+**Error Response - Validation Errors (400 Bad Request):**
+```json
+{
+  "customerId": "Customer id is required field.",
+  "datetime": "dateTime is required field."
+}
+```
+
+---
+
+### Testing Access Control with Postman
+
+**Test Scenario: User trying to create customer (should fail)**
+
+- **Method**: POST
+- **URL**: `https://customer-onboarding-api.onrender.com/customers`
+- **Headers**:
+  - `Content-Type: application/json`
+  - `Authorization: Bearer USER123`
+- **Body**:
+```json
+{
+  "businessName": "Unauthorized Test Company",
+  "phoneNumber": "+1-555-9999"
+}
+```
+
+**Expected Result**: 403 Forbidden error demonstrating proper access control.
+
+## Access Control
+
+The application implements role-based access control using static Bearer tokens:
+
+### Roles and Permissions
+
+| Role | Token | Permissions |
+|------|-------|-------------|
+| **Admin** | `ADMIN123` | - Create customers<br>- View customer details<br>- Schedule appointments |
+| **User** | `USER123` | - View customer details<br>- Schedule appointments |
+
+### Token Usage
+Include the appropriate token in the Authorization header for all API requests:
+```
+Authorization: Bearer ADMIN123
+```
+or
+```
+Authorization: Bearer USER123
+```
+
+### Security Implementation
+- Custom `TokenAuthenticationFilter` validates Bearer tokens
+- Spring Security configuration enforces role-based endpoint access
+- Stateless session management for API-only architecture
+- CSRF protection disabled for REST API usage
+
+## Deployment
+
+This application is configured for deployment on cloud platforms and includes:
+
+- **Environment Configuration**: Supports `PORT` environment variable for cloud deployment
+- **Production Profile**: Optimized settings for production environments
+- **Memory Optimization**: Configured for efficient memory usage on free-tier hosting
+
+**Live Deployment**: The application is deployed and accessible at:
+`https://customer-onboarding-api.onrender.com`
 
 ## Project Structure
 
+```
+src/main/java/com/Assignment/customer_onboarding/
+├── config/
+│   └── SecurityConfig.java              # Spring Security configuration
+├── controller/
+│   ├── CustomerController.java          # Customer REST endpoints
+│   └── AppointmentController.java       # Appointment REST endpoints  
+├── data/
+│   └── InMemoryStorage.java             # Thread-safe data storage layer
+├── exception/
+│   └── GlobalExceptionHandler.java      # Centralized error handling
+├── model/
+│   ├── Customer.java                    # Customer entity model
+│   └── AppointmentRequest.java          # Appointment request DTO
+├── security/
+│   └── TokenAuthenticationFilter.java   # Custom authentication filter
+└── service/
+    └── CustomerService.java             # Business logic layer
+```
 
-##  Assumptions Made
+## Assumptions Made
 
-1. **Document Storage**: Documents are stored as metadata (filenames) only, no actual file upload/storage
-2. **Authentication**: Simple token-based authentication is sufficient for this demo
-3. **Data Persistence**: In-memory storage is acceptable, data doesn't need to survive restarts
-4. **ID Generation**: Auto-incrementing Long IDs starting from 1
-5. **Appointment Logic**: No business logic required, just echo the input back
-6. **Validation**: Basic field validation is sufficient
-7. **Error Responses**: Standard Spring Security error responses are acceptable
+### Data Storage
+- **In-memory persistence**: Data is stored using `ConcurrentHashMap` and is lost when the application restarts
+- **Thread-safe operations**: Uses `AtomicLong` for ID generation and concurrent data structures
+- **No database required**: Simplified storage for demonstration and rapid deployment
 
-## Future Enhancements
+### Security Model
+- **Static token authentication**: Uses predefined tokens (`ADMIN123`, `USER123`) instead of dynamic JWT or OAuth2
+- **Role-based authorization**: Simple two-tier permission system (Admin/User)
+- **No token expiration**: Tokens remain valid indefinitely for demonstration purposes
+- **No user registration**: Predefined roles and tokens only
 
-- Database integration (PostgreSQL/MySQL)
-- JWT token authentication
-- File upload functionality for documents
-- Comprehensive appointment management
-- API documentation with Swagger/OpenAPI
-- Unit and integration tests
-- Docker containerization
-- Logging and monitoring
+### Document Management
+- **Metadata only**: Documents are stored as filename strings, no actual file upload/storage
+- **No file validation**: Document names are stored as-is without format or existence validation
+- **Simulated storage**: Real-world implementation would integrate with file storage services
 
-## API Testing Summary
+### Business Logic
+- **Appointment scheduling**: Stub implementation that echoes input without business logic
+- **No validation of relationships**: Appointment `customerId` is not validated against existing customers
+- **Simplified workflow**: No complex business rules or state management
 
-| Endpoint | Method | Admin Token | User Token | Expected Result |
-|----------|--------|-------------|------------|----------------|
-| `/customers` | POST | ✅ 201 | ❌ 403 | Role-based access working |
-| `/customers/{id}` | GET | ✅ 200 | ✅ 200 | Both roles can read |
-| `/appointments` | POST | ✅ 200 | ✅ 200 | Both roles can schedule |
+### API Design
+- **RESTful conventions**: Follows standard HTTP methods and status codes
+- **JSON-only communication**: No XML or other format support
+- **Basic error handling**: Standard validation and HTTP error responses
 
-## Security Notes
+### Creating a Postman Collection
 
-- Tokens are hardcoded for demo purposes only
-- In production, use proper JWT tokens with expiration
-- Consider implementing HTTPS for secure token transmission
-- Add rate limiting for production deployment
+1. **Create New Collection**: Name it "Customer Onboarding API"
+
+2. **Add Environment Variables**:
+   - `base_url`: `https://your-service-name.onrender.com`
+   - `admin_token`: `ADMIN123`
+   - `user_token`: `USER123`
+
+### Test Sequence Recommendation
+
+1. **Create Customer** (Admin token) → Should return 201
+2. **Get Customer** (User token) → Should return 200
+3. **Create Customer** (User token) → Should return 403
+4. **Schedule Appointment** (User token) → Should return 200
+5. **Invalid Data Tests** → Should return 400
+
+## Performance and Limitations
+
+### Current Limitations
+- **Memory-based storage**: Limited by available RAM
+- **Single instance**: No horizontal scaling support
+- **No data backup**: Data loss on application restart
+- **Basic security**: Production would require enhanced authentication
+
+### Recommended Production Enhancements
+- **Database integration** (PostgreSQL/MySQL)
+- **JWT token authentication** with expiration
+- **File upload functionality** for documents
+- **Comprehensive logging** and monitoring
+- **API documentation** with Swagger/OpenAPI
+- **Unit and integration tests**
+- **Docker containerization**
+
+---
+
+## Support and Documentation
+
+For additional information about Spring Boot and the technologies used:
+- [Spring Boot Documentation](https://spring.io/projects/spring-boot)
+- [Spring Security Reference](https://spring.io/projects/spring-security)
+- [Jakarta Bean Validation](https://beanvalidation.org/)
+
+---
