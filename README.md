@@ -43,7 +43,7 @@ Before running this application, ensure you have:
      - Project: Maven
      - Language: Java
      - Spring Boot: 3.x.x
-     - Java: 17
+     - Java: 21 (in this project java 21 is used)
    - Add Dependencies:
      - Spring Web
      - Spring Security
