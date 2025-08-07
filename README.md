@@ -75,6 +75,7 @@ The application will start on `http://localhost:8080`
 - **Production (Deployed)**: `https://your-service-name.onrender.com`
 
 *Replace `your-service-name` with your actual Render service name in this case `customer-onboarding-api` *
+- **Deployed on **: `https://customer-onboarding-api.onrender.com`
 
 ---
 
@@ -274,6 +275,23 @@ src/main/java/com/Assignment/customer_onboarding/
 └── service/
     └── CustomerService.java             # Business logic layer
 ```
+## Dockerfile
+-The Dockerfile in the root of the repository contains a complete, multi-stage recipe for building and running the application inside a container.
+
+-It starts with a lightweight Java 21 base image (openjdk:21-jdk-slim) to match the project's requirements.
+
+-It copies the project files and uses the Maven Wrapper (mvnw) to build the application into an executable .jar file. Tests are skipped to ensure a fast and reliable build process.
+
+-The final container is configured with an ENTRYPOINT that runs the application, listening on the port provided by the hosting environment (via the ${PORT} variable).
+
+## Render Blueprint (render.yaml)
+-The render.yaml file provides the "Infrastructure as Code" configuration for deploying the service on the Render platform.
+
+-It specifies the creation of a web service named customer-onboarding-api.
+
+-It tells Render to use the docker environment, which means it will look for and build the Dockerfile in the repository.
+
+-It sets the service to run on Render's free hosting plan.
 
 ## Assumptions Made
 
