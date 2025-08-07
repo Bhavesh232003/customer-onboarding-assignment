@@ -1,7 +1,7 @@
 services:
   - type: web
     name: customer-onboarding-api
-    env: java:17
+    env: java:21
     plan: free
     buildCommand: "./mvnw clean package -DskipTests"
     startCommand: "java -Dserver.port=$PORT -jar target/*.jar"
