@@ -1,12 +1,5 @@
 services:
   - type: web
     name: customer-onboarding-api
-    env: java:21
+    env: docker
     plan: free
-    buildCommand: "./mvnw clean package -DskipTests"
-    startCommand: "java -Dserver.port=$PORT -jar target/*.jar"
-    envVars:
-      - key: PORT
-        value: 10000
-      - key: JAVA_TOOL_OPTIONS
-        value: -Xmx300m
